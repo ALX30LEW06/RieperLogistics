@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rieper Logistics – Scan App</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0078ff">
+
+    <!-- Barcodescanner (Module-Version wird in scanner.js importiert) -->
+    <script src="https://unpkg.com/html5-qrcode"></script>
+</head>
+
+<body>
+
+<h1>Rieper Logistics – Scan App</h1>
+
+<!-- Mitarbeitnummer -->
+<div class="section">
+    <label>Mitarbeiternummer:</label>
+    <input type="text" id="mitarbeiter" placeholder="z.B. 007">
+    <button id="saveMitarbeiter">Speichern</button>
+</div>
+
+<hr>
+
+<!-- Formular -->
+<div class="section">
+    <h2>Neuer Eintrag</h2>
+
+    <label>Liefer/Abholscheinnummer (Barcode):</label>
+    <input type="text" id="barcode">
+
+    <button id="startScanner">📷 Barcode scannen</button>
+    <button id="stopScanner" style="display:none;">🛑 Scanner stoppen</button>
+
+    <div id="reader" style="display:none; width:100%; max-width:350px; margin-top:10px;"></div>
+
+    <label>Spedition:</label>
+    <select id="spedition">
+        <option value="LOOSE">LOOSE</option>
+        <option value="SANI">SANI</option>
+    </select>
+
+    <label>Artikel:</label>
+    <input type="text" id="artikel">
+
+    <label>Bemerkung:</label>
+    <input type="text" id="bemerkung">
+
+    <label>100%:</label>
+    <input type="number" id="hundert">
+
+    <label>50%:</label>
+    <input type="number" id="fuenfzig">
+
+    <label>Info:</label>
+    <input type="text" id="info">
+
+    <button id="addEntry">Eintrag speichern</button>
+</div>
+
+<hr>
+
+<!-- Tabelle -->
+<div class="section">
+    <h2>Heutige Einträge</h2>
+
+    <!-- WICHTIG: Der Button, der gefehlt hat!
+         Ohne ihn ist app.js abgestürzt. -->
+    <button id="sendToDropbox" class="danger-btn">
+        📤 Tagesabschluss an Dropbox senden
+    </button>
+
+    <div class="table-wrapper">
+        <table id="listTable">
+            <thead>
+                <tr>
+                    <th>Barcode</th>
+                    <th>Spedition</th>
+                    <th>Artikel</th>
+                    <th>Bemerkung</th>
+                    <th>100%</th>
+                    <th>50%</th>
+                    <th>Info</th>
+                    <th>Aktionen</th>
+                </tr>
+            </thead>
+            <tbody id="listBody"></tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Service Worker -->
+<script>
+if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("service-worker.js");
+}
+</script>
+
+<!-- Unsere Haupt-App -->
+<script type="module" src="app.js"></script>
+
+</body>
+</html>

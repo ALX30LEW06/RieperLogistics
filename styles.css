@@ -1,0 +1,97 @@
+/* ===========================================
+   styles.css – Layout & Design der App
+   ===========================================
+   Enthält:
+   - Grundlayout
+   - Abstände & UI-Elemente
+   - Tabellen-Styling
+   - Mobile-Optimierungen
+   =========================================== */
+
+/* ---------- Grundgestaltung ---------- */
+
+body {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    margin: 0;
+    background: #f3f3f3;
+}
+
+/* Karten-/Abschnitt-Design */
+.section {
+    background: white;
+    padding: 15px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* ---------- Eingabefelder & Auswahl ---------- */
+
+input, select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+/* ---------- Buttons ---------- */
+
+button {
+    padding: 10px 15px;
+    background: #0078ff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #005fcc;
+}
+
+/* ---------- Tabellencontainer ---------- */
+
+/* Verhindert, dass Tabelle gequetscht wird */
+.table-wrapper {
+    overflow-x: auto;       /* Scrollbar bei kleinen Displays */
+    -webkit-overflow-scrolling: touch;
+    margin-top: 10px;
+}
+
+/* ---------- Tabellenformat ---------- */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 800px;       /* wichtig für mobile Ansicht */
+}
+
+table th {
+    background: #ddd;
+    padding: 8px;
+    text-align: center;
+}
+
+table td {
+    border: 1px solid #bbb;
+    padding: 8px;
+    text-align: center;
+}
+
+/* ---------- Mobile Anpassung ---------- */
+@media (max-width: 600px) {
+    body {
+        padding: 10px;
+    }
+
+    button {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .section {
+        padding: 12px;
+    }
+}
