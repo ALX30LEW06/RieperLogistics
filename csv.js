@@ -28,11 +28,13 @@ function esc(v) {
 
 
 // ----------------------------------------
-// Dateiname erzeugen
+// Dateiname erzeugen (mit Timestamp für iOS-Kompatibilität)
 // ----------------------------------------
 export function generateCsvFilename(mitarbeiter, clientId) {
-    const today = new Date().toISOString().split("T")[0];
-    return `${today}_DEVICE_${clientId}_MA_${mitarbeiter}.csv`;
+    const now = new Date();
+    const date = now.toISOString().split("T")[0]; // YYYY-MM-DD
+    const time = now.toISOString().split("T")[1].replace(/:/g, "-").substring(0, 8); // HH-MM-SS
+    return `${date}_${time}_DEVICE_${clientId}_MA_${mitarbeiter}.csv`;
 }
 
 

@@ -208,7 +208,7 @@ async function sendDailyDataToBackend() {
     console.log("⬆ Sende Datei an Backend:", filename);
 
     try {
-        const response = await fetch("http://localhost:5000/upload-append", {
+        const response = await fetch("https://rieperlogistics.onrender.com/upload-append",{  
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ filename, csvData })
