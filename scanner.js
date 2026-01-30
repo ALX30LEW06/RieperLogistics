@@ -23,7 +23,7 @@ export async function startScanner(onScan) {
     try {
         const cameras = await Html5Qrcode.getCameras();
         if (cameras.length === 0) {
-            alert("Keine Kamera gefunden!");
+            alert("❌ Keine Kamera gefunden!");
             return;
         }
 
@@ -39,7 +39,15 @@ export async function startScanner(onScan) {
 
     } catch (err) {
         console.error("Scanner Fehler:", err);
-        alert("Kamera konnte nicht gestartet werden.");
+        
+        // 🔴 Bessere Fehlermeldungen für iPhone
+        if (err.name === 'NotAllowedError' || err.message.includes('Permission')) {
+            alert("❌ Kamera-Zugriff verweigert!\n\niPhone: Einstellungen > Safari > Kamera aktivieren");
+        } else if (err.name === 'NotFoundError') {
+            alert("❌ Keine Kamera gefunden!");
+        } else {
+            alert("❌ Kamera konnte nicht gestartet werden.\n\nFehler: " + err.message);
+        }
     }
 }
 

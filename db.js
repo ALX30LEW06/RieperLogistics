@@ -62,6 +62,12 @@ export async function initDB() {
                 store.createIndex("by_mitarbeiter", "mitarbeiter");
             }
         };
+    }).then(async () => {
+        // 🔴 KRITISCH: Persistent Storage für iPhone (verhindert Datenverlust)
+        if (navigator.storage && navigator.storage.persist) {
+            const isPersistent = await navigator.storage.persist();
+            console.log(`💾 Persistent Storage: ${isPersistent ? '✅ Aktiv' : '⚠️ Nicht verfügbar'}`);
+        }
     });
 }
 
@@ -157,6 +163,7 @@ export function dbLoadEntries(date, mitarbeiter) {
 
 // -------------------------------------------------------------
 // Datenbank komplett leeren (für erfolgreichen Tagesabschluss)
+// VERALTET - Nutze stattdessen dbClearByDateAndMitarbeiter!
 // -------------------------------------------------------------
 export function dbClearAll() {
     return new Promise((resolve, reject) => {
@@ -167,5 +174,86 @@ export function dbClearAll() {
 
         tx.oncomplete = resolve;
         tx.onerror = () => reject("Fehler beim Löschen aller Einträge");
+    });
+}
+
+
+
+// -------------------------------------------------------------
+// NUR Einträge eines bestimmten Datums + Mitarbeiters löschen
+// SICHERER als dbClearAll - löscht nur was wirklich gesendet wurde!
+// -------------------------------------------------------------
+export function dbClearByDateAndMitarbeiter(date, mitarbeiter) {
+
+    return new Promise((resolve, reject) => {
+
+        const tx = db.transaction("entries", "readwrite");
+        const store = tx.objectStore("entries");
+
+        const idsToDelete = [];
+        const cursor = store.openCursor();
+
+        cursor.onsuccess = (e) => {
+            const cur = e.target.result;
+
+            if (cur) {
+                const val = cur.value;
+
+                // Nur löschen wenn BEIDE Bedingungen erfüllt
+                if (val.date === date && val.mitarbeiter === mitarbeiter) {
+                    idsToDelete.push(val.id);
+                }
+
+                cur.continue();
+
+            } else {
+                // Cursor fertig → jetzt alle gesammelten IDs löschen
+                idsToDelete.forEach(id => {
+                    store.delete(id);
+                });
+
+                console.log(`🗑️ Gelöscht: ${idsToDelete.length} Einträge (${date}, ${mitarbeiter})`);
+            }
+        };
+
+        tx.oncomplete = resolve;
+        tx.onerror = () => reject("Fehler beim mitarbeiter-spezifischen Löschen");
+    });
+}
+
+
+
+// -------------------------------------------------------------
+// ALLE Einträge eines Mitarbeiters laden (alle Daten!)
+// Wird benutzt um alte ungesendete Einträge zu finden
+// -------------------------------------------------------------
+export function dbLoadAllEntriesByMitarbeiter(mitarbeiter) {
+
+    return new Promise((resolve) => {
+
+        const tx = db.transaction("entries", "readonly");
+        const store = tx.objectStore("entries");
+
+        const result = [];
+        const cursor = store.openCursor();
+
+        cursor.onsuccess = (e) => {
+
+            const cur = e.target.result;
+
+            if (cur) {
+                const val = cur.value;
+
+                // Filter: nur richtiger Mitarbeiter (ALLE Daten)
+                if (val.mitarbeiter === mitarbeiter) {
+                    result.push(val);
+                }
+
+                cur.continue();
+
+            } else {
+                resolve(result); // fertig
+            }
+        };
     });
 }

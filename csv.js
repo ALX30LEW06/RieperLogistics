@@ -28,12 +28,13 @@ function esc(v) {
 
 
 // ----------------------------------------
-// Dateiname erzeugen (mit Timestamp für iOS-Kompatibilität)
+// Dateiname erzeugen (MIT Timestamp - jede Sendung = eigene Datei = SICHER!)
 // ----------------------------------------
 export function generateCsvFilename(mitarbeiter, clientId) {
     const now = new Date();
     const date = now.toISOString().split("T")[0]; // YYYY-MM-DD
     const time = now.toISOString().split("T")[1].replace(/:/g, "-").substring(0, 8); // HH-MM-SS
+    // Jede Sendung bekommt eigene Datei - sicherer als Append!
     return `${date}_${time}_DEVICE_${clientId}_MA_${mitarbeiter}.csv`;
 }
 

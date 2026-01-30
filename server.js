@@ -85,6 +85,64 @@ function saveEnvTokens() {
 }
 
 /**
+ * 📤 CSV Simple Upload - jede Sendung = neue Datei (SICHER!)
+ */
+app.post("/upload", async (req, res) => {
+  const { filename, csvData } = req.body;
+
+  if (!filename || !csvData) {
+    return res.json({ success: false, error: "Missing filename or data" });
+  }
+
+  const dropboxPath = `/RieperLogistik/${filename}`;
+  console.log("📤 Upload:", dropboxPath);
+
+  try {
+    const accessToken = await getDropboxAccessToken();
+
+    const upload = await fetch("https://content.dropboxapi.com/2/files/upload", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${accessToken}`,
+        "Dropbox-API-Arg": JSON.stringify({
+          path: dropboxPath,
+          mode: "add",  // Neue Datei - kein overwrite!
+          autorename: true  // Falls Datei existiert, automatisch umbenennen
+        }),
+        "Content-Type": "application/octet-stream"
+      },
+      body: csvData
+    });
+
+    const result = await upload.json();
+
+    // ⚠️ KRITISCH: Nur success: true wenn Dropbox wirklich erfolgreich!
+    if (!upload.ok) {
+      console.error("❌ Dropbox Upload Fehler:", result);
+      return res.json({ 
+        success: false, 
+        error: result.error_summary || "Dropbox Upload fehlgeschlagen" 
+      });
+    }
+
+    // ✅ Dropbox hat bestätigt - jetzt ist es sicher!
+    console.log("✔ CSV erfolgreich in Dropbox hochgeladen:", result.name);
+    return res.json({ 
+      success: true,
+      filename: result.name,
+      path: result.path_display
+    });
+
+  } catch (err) {
+    console.error("❌ Schwerer Fehler beim Upload:", err);
+    return res.json({ 
+      success: false, 
+      error: `Backend-Fehler: ${err.message}` 
+    });
+  }
+});
+
+/**
  * 📤 CSV Append Upload (Datei wird erweitert statt überschrieben)
  */
 app.post("/upload-append", async (req, res) => {
