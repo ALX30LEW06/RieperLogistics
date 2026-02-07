@@ -85,6 +85,134 @@ function saveEnvTokens() {
 }
 
 /**
+ * ========================================
+ * 📊 STATS-SYSTEM für Website-KPIs
+ * ========================================
+ */
+
+const STATS_PATH = "/RieperLogistik/stats.json";
+
+/**
+ * Stats aus Dropbox lesen (oder initial erstellen)
+ */
+async function readStatsFromDropbox() {
+  try {
+    const accessToken = await getDropboxAccessToken();
+    
+    const download = await fetch("https://content.dropboxapi.com/2/files/download", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${accessToken}`,
+        "Dropbox-API-Arg": JSON.stringify({ path: STATS_PATH })
+      }
+    });
+
+    if (download.ok) {
+      const content = await download.text();
+      return JSON.parse(content);
+    } else {
+      // Stats existieren noch nicht → Initial erstellen
+      console.log("📊 Stats-Datei existiert noch nicht, erstelle initial...");
+      return {
+        totalScans: 0,
+        totalUploads: 0,
+        lastUpdate: new Date().toISOString(),
+        todayScans: 0,
+        todayDate: new Date().toISOString().split('T')[0],
+        activeUsersToday: new Set(),
+        allTimeUsers: new Set()
+      };
+    }
+  } catch (err) {
+    console.error("⚠️ Fehler beim Lesen von stats.json:", err.message);
+    // Fallback: leere Stats zurückgeben
+    return {
+      totalScans: 0,
+      totalUploads: 0,
+      lastUpdate: new Date().toISOString(),
+      todayScans: 0,
+      todayDate: new Date().toISOString().split('T')[0],
+      activeUsersToday: new Set(),
+      allTimeUsers: new Set()
+    };
+  }
+}
+
+/**
+ * Stats aktualisieren nach erfolgreichem Upload
+ */
+async function updateStats(scanCount, mitarbeiterId) {
+  try {
+    const stats = await readStatsFromDropbox();
+    const today = new Date().toISOString().split('T')[0];
+
+    // Tag gewechselt? → Reset today-Zähler
+    if (stats.todayDate !== today) {
+      stats.todayScans = 0;
+      stats.activeUsersToday = new Set();
+      stats.todayDate = today;
+    }
+
+    // Stats aktualisieren
+    stats.totalScans += scanCount;
+    stats.totalUploads += 1;
+    stats.todayScans += scanCount;
+    stats.lastUpdate = new Date().toISOString();
+
+    // Nutzer tracken (anonymisiert via Set - keine doppelten)
+    if (mitarbeiterId) {
+      if (!stats.activeUsersToday) stats.activeUsersToday = new Set();
+      if (!stats.allTimeUsers) stats.allTimeUsers = new Set();
+      
+      stats.activeUsersToday.add(mitarbeiterId);
+      stats.allTimeUsers.add(mitarbeiterId);
+    }
+
+    // Sets zu Arrays für JSON (Sets können nicht serialisiert werden)
+    const statsToSave = {
+      ...stats,
+      activeUsersToday: Array.from(stats.activeUsersToday || []),
+      allTimeUsers: Array.from(stats.allTimeUsers || [])
+    };
+
+    // Public-Stats (ohne Mitarbeiter-IDs!)
+    const publicStats = {
+      totalScans: statsToSave.totalScans,
+      totalUploads: statsToSave.totalUploads,
+      todayScans: statsToSave.todayScans,
+      activeUsersCount: statsToSave.activeUsersToday.length,
+      totalUsersCount: statsToSave.allTimeUsers.length,
+      lastUpdate: statsToSave.lastUpdate
+    };
+
+    // In Dropbox speichern
+    const accessToken = await getDropboxAccessToken();
+    const upload = await fetch("https://content.dropboxapi.com/2/files/upload", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${accessToken}`,
+        "Dropbox-API-Arg": JSON.stringify({
+          path: STATS_PATH,
+          mode: "overwrite"
+        }),
+        "Content-Type": "application/octet-stream"
+      },
+      body: JSON.stringify(publicStats, null, 2)
+    });
+
+    if (upload.ok) {
+      console.log(`📊 Stats aktualisiert: +${scanCount} Scans | Gesamt: ${publicStats.totalScans}`);
+    } else {
+      console.error("⚠️ Stats-Upload fehlgeschlagen:", await upload.text());
+    }
+
+  } catch (err) {
+    // ⚠️ WICHTIG: Fehler nicht werfen - Upload soll trotzdem durchgehen!
+    console.error("⚠️ Stats-Update fehlgeschlagen (nicht kritisch):", err.message);
+  }
+}
+
+/**
  * 📤 CSV Simple Upload - jede Sendung = neue Datei (SICHER!)
  */
 app.post("/upload", async (req, res) => {
@@ -130,6 +258,16 @@ app.post("/upload", async (req, res) => {
 
     // ✅ Dropbox hat bestätigt - jetzt ist es sicher!
     console.log("✔ CSV erfolgreich in Dropbox hochgeladen:", result.name);
+    
+    // 📊 Stats aktualisieren (fail-safe - blockiert Upload nicht)
+    try {
+      const scanCount = csvData.split('\n').length - 2; // -2 wegen Header + BOM
+      const mitarbeiterId = filename.match(/MA_([^.]+)/)?.[1]; // MA aus Filename extrahieren
+      await updateStats(scanCount, mitarbeiterId);
+    } catch (statsErr) {
+      console.error("⚠️ Stats-Update fehlgeschlagen (Upload erfolgreich):", statsErr.message);
+    }
+    
     return res.json({ 
       success: true,
       filename: result.name,
@@ -248,6 +386,41 @@ app.get("/auth/callback", async (req, res) => {
     <p>Tokens wurden gespeichert!</p>
     <p>Du kannst dieses Fenster schließen.</p>
   `);
+});
+
+/**
+ * 📊 Public Stats API - für Website-Integration
+ */
+app.get("/stats/public", async (req, res) => {
+  try {
+    const accessToken = await getDropboxAccessToken();
+    
+    const download = await fetch("https://content.dropboxapi.com/2/files/download", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${accessToken}`,
+        "Dropbox-API-Arg": JSON.stringify({ path: STATS_PATH })
+      }
+    });
+
+    if (download.ok) {
+      const stats = await download.json();
+      res.json(stats);
+    } else {
+      // Stats existieren noch nicht
+      res.json({
+        totalScans: 0,
+        totalUploads: 0,
+        todayScans: 0,
+        activeUsersCount: 0,
+        totalUsersCount: 0,
+        lastUpdate: null
+      });
+    }
+  } catch (err) {
+    console.error("❌ Fehler beim Abrufen der Stats:", err);
+    res.status(500).json({ error: "Stats konnten nicht geladen werden" });
+  }
 });
 
 /**
