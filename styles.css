@@ -36,6 +36,11 @@ input, select {
     border: 1px solid #ccc;
 }
 
+/* Info-Feld immer in Kleinbuchstaben */
+#info {
+    text-transform: lowercase;
+}
+
 /* ---------- Buttons ---------- */
 
 button {

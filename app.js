@@ -168,7 +168,7 @@ document.getElementById("addEntry").addEventListener("click", async () => {
             bemerkung: document.getElementById("bemerkung").value,
             hundert: sanitizeNumber(document.getElementById("hundert").value),
             fuenfzig: sanitizeNumber(document.getElementById("fuenfzig").value),
-            info: document.getElementById("info").value,
+            info: document.getElementById("info").value.toLowerCase(),
             mitarbeiter: ma,
             date: getToday(),
             timestamp: new Date().toISOString()

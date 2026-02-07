@@ -45,18 +45,18 @@ export function generateCsvFilename(mitarbeiter, clientId) {
 export function generateCsvContent(entries) {
 
     const header =
-        "barcode;spedition;artikel;bemerkung;hundert;fuenfzig;info;mitarbeiter;date;timestamp";
+        "date;barcode;artikel;info;hundert;fuenfzig;bemerkung;mitarbeiter;spedition;timestamp";
 
     const rows = entries.map(e => [
+        esc(e.date),
         protectBarcode(e.barcode),
-        esc(e.spedition),
         esc(e.artikel),
-        esc(e.bemerkung),
+        esc(e.info),
         e.hundert ?? 0,   // Zahl bleibt Zahl!
         e.fuenfzig ?? 0, // Zahl bleibt Zahl!
-        esc(e.info),
+        esc(e.bemerkung),
         esc(e.mitarbeiter),
-        esc(e.date),
+        esc(e.spedition),
         esc(e.timestamp)
     ].join(";"));
 

@@ -100,6 +100,9 @@ app.post("/upload", async (req, res) => {
   try {
     const accessToken = await getDropboxAccessToken();
 
+    // CSV als UTF-8 Buffer mit BOM für korrekte Umlaut-Darstellung in Excel
+    const csvBuffer = Buffer.from(csvData, 'utf8');
+
     const upload = await fetch("https://content.dropboxapi.com/2/files/upload", {
       method: "POST",
       headers: {
@@ -111,7 +114,7 @@ app.post("/upload", async (req, res) => {
         }),
         "Content-Type": "application/octet-stream"
       },
-      body: csvData
+      body: csvBuffer
     });
 
     const result = await upload.json();
