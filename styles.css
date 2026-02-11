@@ -41,6 +41,70 @@ input, select {
     text-transform: lowercase;
 }
 
+/* ---------- Custom Dropdown für Artikel ---------- */
+
+.custom-dropdown {
+    position: relative;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.custom-dropdown input {
+    width: 100%;
+    padding-right: 35px;
+    margin-bottom: 0;
+}
+
+.custom-dropdown .dropdown-arrow {
+    position: absolute;
+    right: 10px;
+    top: 8px;
+    pointer-events: none;
+    color: #666;
+    font-size: 12px;
+}
+
+.dropdown-list {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    max-height: 250px;
+    overflow-y: auto;
+    background: white;
+    border: 1px solid #ccc;
+    border-top: none;
+    border-radius: 0 0 4px 4px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    z-index: 1000;
+    -webkit-overflow-scrolling: touch;
+}
+
+.dropdown-list.show {
+    display: block;
+}
+
+.dropdown-item {
+    padding: 12px 10px;
+    cursor: pointer;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background 0.2s;
+}
+
+.dropdown-item:hover,
+.dropdown-item:active {
+    background: #e6f2ff;
+}
+
+.dropdown-item:last-child {
+    border-bottom: none;
+}
+
+.dropdown-item.hidden {
+    display: none;
+}
+
 /* ---------- Buttons ---------- */
 
 button {

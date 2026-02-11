@@ -10,8 +10,11 @@
     <meta name="theme-color" content="#0078ff">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="RieperLog">
     <link rel="apple-touch-icon" href="icons/icon-192.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-192.png">
+    <link rel="apple-touch-startup-image" href="icons/icon-512.png">
 
     <!-- Barcodescanner (Module-Version wird in scanner.js importiert) -->
     <script src="https://unpkg.com/html5-qrcode"></script>
@@ -49,56 +52,59 @@
     </select>
 
     <label>Artikel:</label>
-    <input type="text" id="artikel" list="artikelListe" placeholder="Artikel auswählen oder eingeben">
-    <datalist id="artikelListe">
-        <option value="Badewannendrehsitz">
-        <option value="Beratung">
-        <option value="Pflegebett - Dali / Dali Low">
-        <option value="Bettenprüfung">
-        <option value="Bettschutzeinlagen">
-        <option value="Badewannenlifter">
-        <option value="Deckenbodenstan­ge">
-        <option value="Duschklappsitz">
-        <option value="Deckenlifter">
-        <option value="Duschtoilettenstuhl Fahrbar">
-        <option value="Duschstuhl mit Arm und Rückenlehne">
-        <option value="Einsatzpauschale">
-        <option value="Einlegerahmen">
-        <option value="Elektrorollstuhl">
-        <option value="Greifhilfe/Greifzange">
-        <option value="Haltegriff Bohren oder Kleben">
-        <option value="Haltegriff Saugnapf">
-        <option value="Duschhocker">
-        <option value="Karton">
-        <option value="Sitzkissen">
-        <option value="Sauerstoffkonzentrator">
-        <option value="Patientenlifter">
-        <option value="Rollstuhl (Standard, Aktiv, Leichtgewicht)">
-        <option value="Standard Matratze">
-        <option value="Multifunktionsrollstuhl">
-        <option value="Mobiler Sauerstoffkonzentrator">
-        <option value="Rampe">
-        <option value="Anbau oder Reparaturen">
-        <option value="Rollator">
-        <option value="Rutschbrett">
-        <option value="Schiebe-, Bremshilfe, Schubgerät, R20">
-        <option value="Scooter">
-        <option value="Sonstiges">
-        <option value="Spannbettlaken">
-        <option value="Spezialbett">
-        <option value="Stechbecken">
-        <option value="Stützklappgriff">
-        <option value="Toilettensitzerhöhung - Ticco 2G">
-        <option value="Beistelltisch">
-        <option value="Bewegungstrainer">
-        <option value="Transportstuhl">
-        <option value="Treppensteiger">
-        <option value="Toilettensitzerhöhung - TSE 120 / TSE 120Plus">
-        <option value="Toilettenstuhl Fahrbar">
-        <option value="Umzug Bett">
-        <option value="Urinflaschenset">
-        <option value="Weichlagerungsmatratze/Wechseldruckmatratze">
-    </datalist>
+    <div class="custom-dropdown">
+        <input type="text" id="artikel" placeholder="Bitte auswählen" autocomplete="off" readonly>
+        <div class="dropdown-arrow">▼</div>
+        <div class="dropdown-list" id="artikelDropdown">
+            <div class="dropdown-item" data-value="Badewannendrehsitz">Badewannendrehsitz</div>
+            <div class="dropdown-item" data-value="Beratung">Beratung</div>
+            <div class="dropdown-item" data-value="Pflegebett - Dali / Dali Low">Pflegebett - Dali / Dali Low</div>
+            <div class="dropdown-item" data-value="Bettenprüfung">Bettenprüfung</div>
+            <div class="dropdown-item" data-value="Bettschutzeinlagen">Bettschutzeinlagen</div>
+            <div class="dropdown-item" data-value="Badewannenlifter">Badewannenlifter</div>
+            <div class="dropdown-item" data-value="Deckenbodenstan­ge">Deckenbodenstan­ge</div>
+            <div class="dropdown-item" data-value="Duschklappsitz">Duschklappsitz</div>
+            <div class="dropdown-item" data-value="Deckenlifter">Deckenlifter</div>
+            <div class="dropdown-item" data-value="Duschtoilettenstuhl Fahrbar">Duschtoilettenstuhl Fahrbar</div>
+            <div class="dropdown-item" data-value="Duschstuhl mit Arm und Rückenlehne">Duschstuhl mit Arm und Rückenlehne</div>
+            <div class="dropdown-item" data-value="Einsatzpauschale">Einsatzpauschale</div>
+            <div class="dropdown-item" data-value="Einlegerahmen">Einlegerahmen</div>
+            <div class="dropdown-item" data-value="Elektrorollstuhl">Elektrorollstuhl</div>
+            <div class="dropdown-item" data-value="Greifhilfe/Greifzange">Greifhilfe/Greifzange</div>
+            <div class="dropdown-item" data-value="Haltegriff Bohren oder Kleben">Haltegriff Bohren oder Kleben</div>
+            <div class="dropdown-item" data-value="Haltegriff Saugnapf">Haltegriff Saugnapf</div>
+            <div class="dropdown-item" data-value="Duschhocker">Duschhocker</div>
+            <div class="dropdown-item" data-value="Karton">Karton</div>
+            <div class="dropdown-item" data-value="Sitzkissen">Sitzkissen</div>
+            <div class="dropdown-item" data-value="Sauerstoffkonzentrator">Sauerstoffkonzentrator</div>
+            <div class="dropdown-item" data-value="Patientenlifter">Patientenlifter</div>
+            <div class="dropdown-item" data-value="Rollstuhl (Standard, Aktiv, Leichtgewicht)">Rollstuhl (Standard, Aktiv, Leichtgewicht)</div>
+            <div class="dropdown-item" data-value="Standard Matratze">Standard Matratze</div>
+            <div class="dropdown-item" data-value="Multifunktionsrollstuhl">Multifunktionsrollstuhl</div>
+            <div class="dropdown-item" data-value="Mobiler Sauerstoffkonzentrator">Mobiler Sauerstoffkonzentrator</div>
+            <div class="dropdown-item" data-value="Rampe">Rampe</div>
+            <div class="dropdown-item" data-value="Anbau oder Reparaturen">Anbau oder Reparaturen</div>
+            <div class="dropdown-item" data-value="Rollator">Rollator</div>
+            <div class="dropdown-item" data-value="Rutschbrett">Rutschbrett</div>
+            <div class="dropdown-item" data-value="Schiebe-, Bremshilfe, Schubgerät, R20">Schiebe-, Bremshilfe, Schubgerät, R20</div>
+            <div class="dropdown-item" data-value="Scooter">Scooter</div>
+            <div class="dropdown-item" data-value="Sonstiges (Bemerkung Füllen)">Sonstiges (Bemerkung Füllen)</div>
+            <div class="dropdown-item" data-value="Spannbettlaken">Spannbettlaken</div>
+            <div class="dropdown-item" data-value="Spezialbett">Spezialbett</div>
+            <div class="dropdown-item" data-value="Stechbecken">Stechbecken</div>
+            <div class="dropdown-item" data-value="Stützklappgriff">Stützklappgriff</div>
+            <div class="dropdown-item" data-value="Toilettensitzerhöhung - Ticco 2G">Toilettensitzerhöhung - Ticco 2G</div>
+            <div class="dropdown-item" data-value="Beistelltisch">Beistelltisch</div>
+            <div class="dropdown-item" data-value="Bewegungstrainer">Bewegungstrainer</div>
+            <div class="dropdown-item" data-value="Transportstuhl">Transportstuhl</div>
+            <div class="dropdown-item" data-value="Treppensteiger">Treppensteiger</div>
+            <div class="dropdown-item" data-value="Toilettensitzerhöhung - TSE 120 / TSE 120Plus">Toilettensitzerhöhung - TSE 120 / TSE 120Plus</div>
+            <div class="dropdown-item" data-value="Toilettenstuhl Fahrbar">Toilettenstuhl Fahrbar</div>
+            <div class="dropdown-item" data-value="Umzug Bett">Umzug Bett</div>
+            <div class="dropdown-item" data-value="Urinflaschenset">Urinflaschenset</div>
+            <div class="dropdown-item" data-value="Weichlagerungsmatratze/Wechseldruckmatratze">Weichlagerungsmatratze/Wechseldruckmatratze</div>
+        </div>
+    </div>
 
     <label>Bemerkung:</label>
     <input type="text" id="bemerkung">

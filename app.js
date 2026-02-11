@@ -75,12 +75,45 @@ document.getElementById("saveMitarbeiter").addEventListener("click", () => {
 
 
 // =====================================================
+// Custom Dropdown Funktionalität für Artikel
+// =====================================================
+function initArtikelDropdown() {
+    const input = document.getElementById("artikel");
+    const dropdown = document.getElementById("artikelDropdown");
+    const items = dropdown.querySelectorAll(".dropdown-item");
+
+    // Zeige Dropdown beim Klick (Input ist readonly)
+    input.addEventListener("click", () => {
+        dropdown.classList.toggle("show");
+    });
+
+    // Verstecke Dropdown beim Klick außerhalb
+    document.addEventListener("click", (e) => {
+        if (!e.target.closest(".custom-dropdown")) {
+            dropdown.classList.remove("show");
+        }
+    });
+
+    // Wähle Item beim Klick
+    items.forEach(item => {
+        item.addEventListener("click", () => {
+            input.value = item.getAttribute("data-value");
+            dropdown.classList.remove("show");
+        });
+    });
+}
+
+
+// =====================================================
 // Seite laden → Datenbank initialisieren & Tabelle anzeigen
 // =====================================================
 window.addEventListener("load", async () => {
 
     const ma = localStorage.getItem("mitarbeiter");
     if (ma) document.getElementById("mitarbeiter").value = ma;
+
+    // Initialisiere Custom Dropdown
+    initArtikelDropdown();
 
     await initDB();
 
