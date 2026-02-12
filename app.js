@@ -83,7 +83,9 @@ function initArtikelDropdown() {
     const items = dropdown.querySelectorAll(".dropdown-item");
 
     // Zeige Dropdown beim Klick (Input ist readonly)
-    input.addEventListener("click", () => {
+    input.addEventListener("click", (e) => {
+        e.preventDefault();
+        input.blur(); // Verhindert Tastatur auf iOS
         dropdown.classList.toggle("show");
     });
 
