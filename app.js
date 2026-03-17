@@ -107,6 +107,33 @@ function initArtikelDropdown() {
 
 
 // =====================================================
+// Radio Button Handler (für Browser-Kompatibilität)
+// =====================================================
+function initRadioButtons() {
+    const radioButtons = document.querySelectorAll('input[name="spedition"]');
+    
+    radioButtons.forEach(radio => {
+        radio.addEventListener('change', function() {
+            // Entferne 'checked' Klasse von allen Labels
+            document.querySelectorAll('.radio-label').forEach(label => {
+                label.classList.remove('checked');
+            });
+            
+            // Füge 'checked' Klasse zum ausgewählten Label hinzu
+            if (this.checked) {
+                this.closest('.radio-label').classList.add('checked');
+            }
+        });
+        
+        // Setze initial checked state
+        if (radio.checked) {
+            radio.closest('.radio-label').classList.add('checked');
+        }
+    });
+}
+
+
+// =====================================================
 // Seite laden → Datenbank initialisieren & Tabelle anzeigen
 // =====================================================
 window.addEventListener("load", async () => {
@@ -116,6 +143,9 @@ window.addEventListener("load", async () => {
 
     // Initialisiere Custom Dropdown
     initArtikelDropdown();
+
+    // Initialisiere Radio Button Handler (für Browser-Kompatibilität)
+    initRadioButtons();
 
     await initDB();
 
@@ -196,9 +226,16 @@ document.getElementById("addEntry").addEventListener("click", async () => {
             return;
         }
 
+        // 🔴 KRITISCH: Validierung - Spedition muss ausgewählt sein
+        const speditionValue = document.querySelector('input[name="spedition"]:checked')?.value;
+        if (!speditionValue) {
+            alert("⚠️ Bitte Spedition auswählen (LOOSE oder SANI)!");
+            return;
+        }
+
         const entry = {
             barcode: barcodeValue,
-            spedition: document.getElementById("spedition").value,
+            spedition: speditionValue,
             artikel: document.getElementById("artikel").value,
             bemerkung: document.getElementById("bemerkung").value,
             hundert: sanitizeNumber(document.getElementById("hundert").value),
@@ -268,6 +305,9 @@ function clearForm() {
     document.getElementById("hundert").value = "";
     document.getElementById("fuenfzig").value = "";
     document.getElementById("info").value = "";
+    // Radio-Buttons zurücksetzen
+    document.querySelectorAll('input[name="spedition"]').forEach(radio => radio.checked = false);
+    document.querySelectorAll('.radio-label').forEach(label => label.classList.remove('checked'));
 }
 
 
@@ -281,7 +321,13 @@ window.editEntry = function (id) {
     editingId = id;
 
     document.getElementById("barcode").value = e.barcode;
-    document.getElementById("spedition").value = e.spedition;
+    const speditionRadio = document.querySelector(`input[name="spedition"][value="${e.spedition}"]`);
+    if (speditionRadio) {
+        speditionRadio.checked = true;
+        // Aktualisiere Label-Styling
+        document.querySelectorAll('.radio-label').forEach(label => label.classList.remove('checked'));
+        speditionRadio.closest('.radio-label').classList.add('checked');
+    }
     document.getElementById("artikel").value = e.artikel;
     document.getElementById("bemerkung").value = e.bemerkung;
     document.getElementById("hundert").value = e.hundert;

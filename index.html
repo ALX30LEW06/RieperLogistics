@@ -45,11 +45,11 @@
 
     <div id="reader" style="display:none; width:100%; max-width:350px; margin-top:10px;"></div>
 
-    <label>Spedition:</label>
-    <select id="spedition">
-        <option value="LOOSE">LOOSE</option>
-        <option value="SANI">SANI</option>
-    </select>
+    <label>Spedition: <span style="color:red;">*</span></label>
+    <div class="radio-group">
+        <label class="radio-label"><input type="radio" name="spedition" value="LOOSE" required> LOOSE</label>
+        <label class="radio-label"><input type="radio" name="spedition" value="SANI" required> SANI</label>
+    </div>
 
     <label>Artikel:</label>
     <div class="custom-dropdown">
@@ -67,6 +67,7 @@
             <div class="dropdown-item" data-value="D-Lifter">D-Lifter</div>
             <div class="dropdown-item" data-value="DTSf">DTSf</div>
             <div class="dropdown-item" data-value="Duschstuhl">Duschstuhl</div>
+            <div class="dropdown-item" data-value="Einsatz Krankenkasse">Einsatz Krankenkasse</div>
             <div class="dropdown-item" data-value="Einsatzpauschale">Einsatzpauschale</div>
             <div class="dropdown-item" data-value="ELR">ELR</div>
             <div class="dropdown-item" data-value="ERS">ERS</div>
@@ -99,7 +100,7 @@
             <div class="dropdown-item" data-value="Transportstuhl">Transportstuhl</div>
             <div class="dropdown-item" data-value="Treppensteiger">Treppensteiger</div>
             <div class="dropdown-item" data-value="TSE 120">TSE 120</div>
-            <div class="dropdown-item" data-value="TSf">TSf</div>
+            <div class="dropdown-item" data-value="TSf">TSF</div>
             <div class="dropdown-item" data-value="Umzug Bett">Umzug Bett</div>
             <div class="dropdown-item" data-value="Urinflaschenset">Urinflaschenset</div>
             <div class="dropdown-item" data-value="WLM">WLM</div>
